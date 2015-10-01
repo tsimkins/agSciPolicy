@@ -42,7 +42,6 @@ def createUsers(context):
                 ["mjw174", "Wodecki", "Mary", "mjw174@psu.edu", True],
                 ["mfw10", "Wirth", "Mary", "mfw10@psu.edu", False],
                 ["rad2", "Dickerson", "Rob", "rad2@psu.edu", True],
-                ["wst110", "Trueax", "Whittney", "wst110@psu.edu", False],
             ]
 
     printed = []
@@ -216,7 +215,7 @@ def configureFrontPage(context):
             LOG('agSciPolicy.configureFrontPage', INFO, "front-page has no function getPortalTypeName()")
         else:
             if type != 'HomePage':
-                frontPage.setTitle('Home')
+                frontPage.setTitle(site.Title())
                 frontPage.setDescription('')
                 frontPage.setPresentation(False)
                 frontPage.setLayout("document_homepage_view")
@@ -397,31 +396,6 @@ def configureScripts(context):
             'src' : 'getSubsiteHomepageImage',
             'target' : 'getSubsiteHomepageImage.js'
         },
-        { 
-            'src' : 'gradientBackground',
-            'target' : 'gradientBackground.png'
-        },
-        { 
-            'src' : 'gradientBackground',
-            'target' : 'topnav-gradientBackground.png'
-        },
-        { 
-            'src' : 'gradientBackground',
-            'target' : 'leftbutton-gradientBackground.png'
-        },
-        { 
-            'src' : 'gradientBackground',
-            'target' : 'leftbuttonInternal-gradientBackground.png'
-        },
-        {
-            'src' : 'gradientBackground',
-            'target' : 'topnav-alternate-gradientBackground.png'
-        },
-        {
-            'src' : 'gradientBackground',
-            'target' : 'bodyBackground.png'
-        },
-
     ]
     
     try:
@@ -469,7 +443,8 @@ def installAdditionalProducts(context):
             'kupu', 'plone.app.caching', 'FacultyStaffDirectory', 'WebServerAuth', 
             'agCommon', 'collective.contentleadimage', 'collective.portlet.feedmixer', 
             'agsci.photogallery', 'agsci.subsite', 'agsci.UniversalExtender',
-            'CacheableRedirects', 'agsci.seo'
+            'CacheableRedirects', 'agsci.seo', 'collective.portletclass', 
+            'Products.ContentWellPortlets',
     ]
 
     site = context.getSite()
@@ -488,61 +463,6 @@ def installAdditionalProducts(context):
         else:
             LOG('agSciPolicy.installAdditionalProducts', INFO, "Product %s already installed." % product)
 
-# This will update the base_properties file to contain any new base_properties
-# No more "white screen of death"
-
-def updateBaseProperties(context):
-    site = context.getSite()
-    resetProperties = site.getParentNode().get('resetProperties', '').split()
-    LOG('agSciPolicy.updateBaseProperties', INFO, "Resetting %s" % ", ".join(resetProperties))
-    
-    # Let's give it a go!
-    LOG('agSciPolicy.updateBaseProperties', INFO, "Updating Base properties for %s" % site.id)
-    portal_skins = getattr(site, 'portal_skins')
-
-    custom = getattr(portal_skins, 'custom')
-
-    try:
-        agcommon_styles = getattr(portal_skins, 'agcommon_styles')
-    except:
-        LOG('agSciPolicy.updateBaseProperties', INFO, "ERROR: %s : agCommon skin not installed" % site.id)
-        return False
-        
-    try:
-        custom_base_properties = getattr(custom, 'base_properties')
-    except:
-        LOG('agSciPolicy.updateBaseProperties', INFO, "ERROR: %s : No customized base_properties" % site.id)
-        return False
-        
-    base_properties = getattr(agcommon_styles, 'base_properties')
-
-    try:            
-        for myProperty in base_properties.propertyItems():
-            (myPropertyKey, myPropertyValue) = myProperty
-            myPropertyType = base_properties.getPropertyType(myPropertyKey)
-
-            if not custom_base_properties.getProperty(myPropertyKey):
-
-                try:
-                    custom_base_properties.manage_addProperty(myPropertyKey, myPropertyValue, myPropertyType)
-                except:
-                    LOG('agSciPolicy.updateBaseProperties', INFO, "ERROR: %s : Error adding property %s:%s=%s" % (site.id, myPropertyKey, myPropertyType, myPropertyValue))
-                    return False
-                    
-                LOG('agSciPolicy.updateBaseProperties', INFO, "Added %s:%s=%s" % (myPropertyKey, myPropertyType, myPropertyValue))
-
-            elif resetProperties.count(myPropertyKey):
-                try:
-                    custom_base_properties.manage_changeProperties({myPropertyKey : myPropertyValue})
-                except:
-                    LOG('agSciPolicy.updateBaseProperties', INFO, "ERROR: %s : Error updating property %s:%s=%s" % (myKey, myPropertyKey, myPropertyType, myPropertyValue))
-                    continue
-                    
-                LOG('agSciPolicy.updateBaseProperties', INFO, "Updated %s:%s=%s" % (myPropertyKey, myPropertyType, myPropertyValue))
-                            
-    except:
-        LOG('agSciPolicy.updateBaseProperties', INFO, "ERROR: %s : Problem updating properties" % site.id)
-                            
 
 def customizeViewlets(context):
     
@@ -777,8 +697,6 @@ def setupHandlersWrapper(context):
 
     configureScripts(context)
 
-    updateBaseProperties(context)
-    
     configureEditor(context)
     
     createRecentChanges(context)
