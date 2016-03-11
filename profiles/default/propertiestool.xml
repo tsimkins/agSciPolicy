@@ -38,9 +38,9 @@
    <element value="leadimage 250:313"/>
    <element value="gallery 662:900"/>
    <element value="galleryzoom 900:600"/>
-   <element value="feedmixer 128:192"/>
    <element value="micro 100:150"/>
-   <element value="feedmixerlarge 225:338"/>
+   <element value="feedmixerlarge 500:750"/>
+   <element value="feedmixer 250:375"/>
   </property>
  </object>
  <object name="navtree_properties" meta_type="Plone Property Sheet" purge="False">
