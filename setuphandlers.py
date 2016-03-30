@@ -90,7 +90,6 @@ def createUsers(context):
                 'fullname' : '%s %s' % (first, last),
                 'email' : email.strip(),
                 'visible_ids' : True,
-                'use_email_as_login' : False,
             }
             try:
                 regtool.addMember(id, randomPassword(), properties=properties)
