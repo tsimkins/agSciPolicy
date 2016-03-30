@@ -61,7 +61,8 @@ def createUsers(context):
     administratorsGroup = grouptool.getGroupById("Administrators")
     
     # Remove from Administrators group
-    for id in ['aln', 'axd159', 'cjm49', 'gxa2', 'tds194', 'mds118', 'pgw105']:
+    for id in ['aln', 'axd159', 'cjm49', 'gxa2', 'tds194', 
+               'mds118', 'pgw105', 'gra104']:
         administratorsGroup.removeMember(id)
 
     # Remove from Plone site
@@ -88,7 +89,8 @@ def createUsers(context):
                 'username' : id,
                 'fullname' : '%s %s' % (first, last),
                 'email' : email.strip(),
-                'visible_ids' : True
+                'visible_ids' : True,
+                'use_email_as_login' : False,
             }
             try:
                 regtool.addMember(id, randomPassword(), properties=properties)
